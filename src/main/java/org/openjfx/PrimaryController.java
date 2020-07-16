@@ -21,6 +21,7 @@ public class PrimaryController extends Stage {
     ArrayList<User> userList;
 
 
+
     @FXML
     Button BExit;
     @FXML
@@ -36,12 +37,13 @@ public class PrimaryController extends Stage {
     @FXML
     ListView LVMail;
     ObservableList<String> listViewList = FXCollections.observableArrayList();
-    ArrayList<User>arrObjList = new ArrayList<>();
+    ArrayList<User>arrObjList = new ArrayList<User>();
 
 
     public PrimaryController(){
         address = new StringBuilder();
         userList = new ArrayList<>();
+
     }
 
 
@@ -52,6 +54,7 @@ public class PrimaryController extends Stage {
 
     @FXML
     public void generateMail(ActionEvent e){
+
         if(TFLastName.getText().isBlank() || TFName.getText().isBlank()){
             LBLStatus.setText("Name or Last Name is empty");
         }else {
@@ -77,6 +80,7 @@ public class PrimaryController extends Stage {
             LVMail.refresh();
             LVMail.setItems(listViewList);
 
+            address.delete(0,address.length());
 
         }
 
