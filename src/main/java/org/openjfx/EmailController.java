@@ -2,24 +2,26 @@ package org.openjfx;
 
 import java.io.IOException;
 import java.util.*;
-
+import java.lang.Object;
+import java.lang.String;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.impl.StaticLoggerBinder;
+import javafx.scene.control.*;
+import org.apache.commons.lang3.RandomStringUtils;
 import javafx.beans.InvalidationListener;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
-public class PrimaryController extends Stage {
+public class EmailController extends Stage {
 
     StringBuilder address;
     ArrayList<User> userList;
-
+    Logger logger = LoggerFactory.getLogger(EmailController.class);
 
 
     @FXML
@@ -40,10 +42,10 @@ public class PrimaryController extends Stage {
     ArrayList<User>arrObjList = new ArrayList<User>();
 
 
-    public PrimaryController(){
+    public EmailController(){
         address = new StringBuilder();
         userList = new ArrayList<>();
-
+        setTitle("Email generator");
     }
 
 
@@ -72,23 +74,55 @@ public class PrimaryController extends Stage {
             address.append(department);
             address.append("company.com");
 
+
+            String password = RandomStringUtils.randomAlphabetic(8);
+
+
             var email = address.toString();
             LBLStatus.setText(email);
             user.eMail = email;
+            user.setPassword(password);
             arrObjList.add(user);
             listViewList.add(user.toString());
             LVMail.refresh();
             LVMail.setItems(listViewList);
-
+            logger.info("Added user {}",address);
             address.delete(0,address.length());
 
         }
 
     }
 
-    @FXML
-    public void changePassword(){}
 
+    @FXML
+    public void changePassword(){
+        int indx = LVMail.getSelectionModel().getSelectedIndex();
+        User tmp_user = arrObjList.get(indx);
+        TextInputDialog dialog = new TextInputDialog();
+        dialog.setTitle("Change Password");
+        dialog.setContentText("New Password: ");
+
+
+
+        Optional<String> result = dialog.showAndWait();
+        if (result.isEmpty()){
+            tmp_user.setPassword(result.get());
+            logger.info("password of {} changed",tmp_user.eMail);
+            listViewList.remove(indx);
+            listViewList.add(indx,tmp_user.toString());
+            LVMail.setItems(listViewList);
+            LVMail.refresh();
+
+        }else logger.info("password of {} hasnt been changed",tmp_user.eMail);
+
+
+
+    }
+    @FXML
+    public void exit(ActionEvent e){
+        System.exit(0);
+        logger.info("Exit program");
+}
 
 
 
