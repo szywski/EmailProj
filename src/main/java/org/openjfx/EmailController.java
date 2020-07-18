@@ -19,7 +19,7 @@ import javafx.stage.Stage;
 
 public class EmailController extends Stage {
 
-    StringBuilder address;
+
     ArrayList<User> userList;
     Logger logger = LoggerFactory.getLogger(EmailController.class);
 
@@ -43,7 +43,7 @@ public class EmailController extends Stage {
 
 
     public EmailController(){
-        address = new StringBuilder();
+
         userList = new ArrayList<>();
         setTitle("Email generator");
     }
@@ -68,31 +68,20 @@ public class EmailController extends Stage {
             user.name = name;
             user.lastName = lastName;
             user.department = department;
+            user.generateEmailAddress();
+            user.generateRandomPassword();
 
-            address.append(name + ".");
-            address.append(lastName + "@");
-            address.append(department);
-            address.append("company.com");
-
-
-            String password = RandomStringUtils.randomAlphabetic(8);
-
-
-            var email = address.toString();
-            LBLStatus.setText(email);
-            user.eMail = email;
-            user.setPassword(password);
+            LBLStatus.setText(user.eMail);
             arrObjList.add(user);
             listViewList.add(user.toString());
             LVMail.refresh();
             LVMail.setItems(listViewList);
-            logger.info("Added user {}",address);
-            address.delete(0,address.length());
+            logger.info("Added user {}",user.eMail);
+
 
         }
 
     }
-
 
     @FXML
     public void changePassword(){
@@ -105,8 +94,8 @@ public class EmailController extends Stage {
 
 
         Optional<String> result = dialog.showAndWait();
-        if (result.isEmpty()){
-            tmp_user.setPassword(result.get());
+        if (!result.isEmpty()){
+            tmp_user.changeUserPassword(result.get());
             logger.info("password of {} changed",tmp_user.eMail);
             listViewList.remove(indx);
             listViewList.add(indx,tmp_user.toString());
@@ -114,7 +103,6 @@ public class EmailController extends Stage {
             LVMail.refresh();
 
         }else logger.info("password of {} hasnt been changed",tmp_user.eMail);
-
 
 
     }
